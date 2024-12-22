@@ -21,9 +21,9 @@ To debug an iOS application extension, provide thin integration with the
       "type": "sweetpad-lldb",
       "request": "launch",
       "name": "Attach to running app (SweetPad)",
-      "preLaunchTask": "sweetpad: launch",
-    },
-  ],
+      "preLaunchTask": "sweetpad: launch"
+    }
+  ]
 }
 ```
 
@@ -44,6 +44,51 @@ Also, you can create that file by clicking on the "Create a launch.json file" li
    attach the debugger to the running application.
 
 ![Breakpoints](/images/debug-breakpoints.png)
+
+## Customise "preLaunchTask"
+
+You can customise the `preLaunchTask` property in the `launch.json` by creating custom task configurations in the
+`.vscode/tasks.json` file. For example, you can create a task that will build the application with the `Release` scheme
+and then launch the debugger.
+
+```json title=".vscode/tasks.json"
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "sweetpad",
+      "action": "launch",
+      "problemMatcher": [
+        "$sweetpad-watch",
+        "$sweetpad-xcodebuild-default",
+        "$sweetpad-xcbeautify-errors",
+        "$sweetpad-xcbeautify-warnings"
+      ],
+      "label": "sweetpad: launch release",
+      "detail": "Build and Launch the app",
+      "scheme": "Release",
+      "configuration": "Release",
+      "isBackground": true // !!! This is important to detect when the task is finished
+    }
+  ]
+}
+```
+
+Then, update the `preLaunchTask` property in the `launch.json` file to use the new task:
+
+```json title=".vscode/launch.json"
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "sweetpad-lldb",
+      "request": "launch",
+      "name": "Attach to running app (SweetPad)",
+      "preLaunchTask": "sweetpad: launch release"
+    }
+  ]
+}
+```
 
 ## Old tutorial (deprecated)
 
@@ -71,9 +116,9 @@ Also, you can create that file by clicking on the "Create a launch.json file" li
       "request": "attach",
       "name": "Attach to iOS Simulator",
       "waitFor": true,
-      "program": "${command:sweetpad.debugger.getAppPath}",
-    },
-  ],
+      "program": "${command:sweetpad.debugger.getAppPath}"
+    }
+  ]
 }
 ```
 

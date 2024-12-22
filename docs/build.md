@@ -57,10 +57,40 @@ Or you can add tasks to the `tasks.json` file in the `.vscode` folder of your pr
       "label": "SweetPad: Build",
       "type": "sweetpad",
       "action": "launch",
+      "problemMatcher": [
+        "$sweetpad-watch",
+        "$sweetpad-xcodebuild-default",
+        "$sweetpad-xcbeautify-errors",
+        "$sweetpad-xcbeautify-warnings"
+      ],
       "scheme": "terminal23",
-      "configuration": "Debug",
-    },
-  ],
+      "configuration": "Debug"
+    }
+  ]
+}
+```
+
+> **Note:** If you are creating a task for debugging, the `isBackground: true` parameter and the `$sweetpad-watch`
+> problem matcher are required to detect when the task is finished:
+
+```json title=".vscode/tasks.json"
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "sweetpad",
+      "action": "launch",
+      "problemMatcher": [
+        "$sweetpad-watch", // ! Required for debugging
+        "$sweetpad-xcodebuild-default",
+        "$sweetpad-xcbeautify-errors",
+        "$sweetpad-xcbeautify-warnings"
+      ],
+      "label": "sweetpad: launch",
+      "detail": "Build and Launch the app",
+      "isBackground": true // ! Required for debugging
+    }
+  ]
 }
 ```
 
@@ -72,7 +102,7 @@ If you are working on multiple Xcode workspaces, you can set the workspace path 
 {
   // Path to your Xcode workspace (.xcworkspace file)
   // The path can be absolute or relative to the folder in which VSCode is opened.
-  "sweetpad.workspacePath": "/path/to/your/workspace",
+  "sweetpad.workspacePath": "/path/to/your/workspace"
   // Examples:
   // "sweetpad.workspacePath": "terminal23.xcodeproj/project.xcworkspace"
   // "sweetpad.workspacePath": "terminal23.xcworkspace"
@@ -99,7 +129,7 @@ directory. Here's how you can do it in your VSCode's `.vscode/settings.json`:
 
 ```json title=".vscode/settings.json"
 {
-  "sweetpad.build.derivedDataPath": "/path/to/your/derivedData",
+  "sweetpad.build.derivedDataPath": "/path/to/your/derivedData"
   // Examples:
   //
   // 1. Relative path to the folder in which VSCode is opened:
@@ -117,6 +147,49 @@ example, you can skip the macro validation step by adding the `-skipMacroValidat
 
 ```json title=".vscode/settings.json"
 {
-  "sweetpad.build.args": ["-skipMacroValidation"],
+  "sweetpad.build.args": ["-skipMacroValidation"]
+}
+```
+
+## Set additional launch arguments and environment variables
+
+You can pass additional arguments and environment variables to the app when launching it on a simulator or device. Use
+the `sweetpad.build.launchArgs` and `sweetpad.build.launchEnv` settings for this purpose.
+
+For example, to set the `MY_ENV_VAR` environment variable and the `--my-arg` launch argument:
+
+```json title=".vscode/settings.json"
+{
+  "sweetpad.build.launchArgs": ["--my-arg"],
+  "sweetpad.build.launchEnv": {
+    "MY_ENV_VAR": "my-value"
+  }
+}
+```
+
+Also you can set the `launchArgs` and `launchEnv` for custom tasks in the `tasks.json` file. For example:
+
+```json title=".vscode/tasks.json"
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "sweetpad",
+      "action": "launch",
+      "problemMatcher": [
+        "$sweetpad-watch",
+        "$sweetpad-xcodebuild-default",
+        "$sweetpad-xcbeautify-errors",
+        "$sweetpad-xcbeautify-warnings"
+      ],
+      "label": "sweetpad: launch",
+      "detail": "Build and Launch the app",
+      "isBackground": true,
+      "launchArgs": ["--my-arg", "value"],
+      "launchEnv": {
+        "MY_ENV_VAR": "value"
+      }
+    }
+  ]
 }
 ```
